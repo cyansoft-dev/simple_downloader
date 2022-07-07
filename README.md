@@ -50,10 +50,10 @@ Future<void> init() async {
 
     _downloader.callback.addListener(() {
         setState(() {
-        _progress = _downloader.callback.progress;
-        _status = _downloader.callback.status;
-        _total = _downloader.callback.total;
-        _offset = _downloader.callback.offset;
+            _progress = _downloader.callback.progress;
+            _status = _downloader.callback.status;
+            _total = _downloader.callback.total;
+            _offset = _downloader.callback.offset;
         });
     });
 }
