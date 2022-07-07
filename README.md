@@ -21,8 +21,16 @@ import 'package:simple_downloader/simple_downloader.dart';
 ```
 late SimpleDownloader _downloader;
 
-double _progress = 0;
+double _progress = 0.0;
+int _offset = 0;
+int _total = 0;
+
 DownloadStatus _status = DownloadStatus.undefined;
+DownloaderTask _task = const DownloaderTask(
+url:
+    "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
+fileName: "file_example.jpg",
+);
 
 @override
 void initState() {
@@ -34,18 +42,19 @@ Future<void> init() async {
     final pathFile = (await path.getExternalStorageDirectory())!.path;
     if (!mounted) return;
 
-    _downloader = FlDownloader.init(
-        task: DownloaderTask(
-    url: "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
-    downloadPath: pathFile,
-    fileName: "Downloaded.jpg",
-    ));
+    _task = _task.copyWith(
+        downloadPath: pathFile,
+    );
+
+    _downloader = SimpleDownloader.init(task: _task);
 
     _downloader.callback.addListener(() {
-    setState(() {
+        setState(() {
         _progress = _downloader.callback.progress;
         _status = _downloader.callback.status;
-    });
+        _total = _downloader.callback.total;
+        _offset = _downloader.callback.offset;
+        });
     });
 }
 ```
