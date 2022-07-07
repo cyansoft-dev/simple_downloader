@@ -4,7 +4,7 @@ version: 0.0.1
 homepage: https://github.com/cyansoft-dev/simple_downloader.git
 
 environment:
-  sdk: ">=2.17.5 <3.0.0"
+  sdk: ">=2.17.1 <3.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
