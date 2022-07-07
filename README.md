@@ -19,7 +19,7 @@ import 'package:simple_downloader/simple_downloader.dart';
 ```
 ### Initialize 
 ```
-late FlDownloader _downloader;
+late SimpleDownloader _downloader;
 
 double _progress = 0;
 DownloadStatus _status = DownloadStatus.undefined;
