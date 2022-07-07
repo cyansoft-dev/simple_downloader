@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="adry.app.simple_downloader">
+
+  <!-- See https://developer.android.com/training/package-visibility -->
+  <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+    </queries>
+
+</manifest>
