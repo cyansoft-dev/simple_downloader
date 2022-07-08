@@ -24,6 +24,12 @@ class MethodChannelSimpleDownloader extends SimpleDownloaderPlatform {
       final mimeType =
           lookupMimeType('${task.downloadPath!}/${task.fileName!}');
 
+      debugPrint('''{
+        saveDir: ${task.downloadPath},
+        fileName: ${task.fileName},
+        mimeType: $mimeType,
+      }''');
+
       final result = await methodChannel.invokeMethod<bool>('openFile', {
         "savedDir": task.downloadPath,
         "fileName": task.fileName,

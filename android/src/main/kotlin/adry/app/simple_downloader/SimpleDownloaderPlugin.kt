@@ -42,11 +42,12 @@ class SimpleDownloaderPlugin: FlutterPlugin, MethodCallHandler {
   }
   
   private fun open(call: MethodCall, result: Result) {
-    val savedDir:String? = call.argument<String>("savedDir")
-    val fileName:String? =call.argument<String>("fileName")
-    val mimeType:String? = call.argument<String>("mimeType")
+    
+    val savedDir = call.argument<String>("savedDir")
+    val fileName = call.argument<String>("fileName")
+    val mimeType = call.argument<String>("mimeType")
 
-    val saveFilePath:String = savedDir + File.separator.toString() + fileName
+    val saveFilePath = savedDir + File.separator.toString() + fileName
     val intent = validatedFileIntent(context, saveFilePath, mimeType!!)
     if (intent == null) {
       result.success(false)
