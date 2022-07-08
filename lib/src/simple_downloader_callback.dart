@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+/// Default implementation of [ChangeNotifier]
+///
+/// Its a controller to send progress downloading file
 class DownloaderCallback extends ChangeNotifier {
   double _progress = 0.0;
 

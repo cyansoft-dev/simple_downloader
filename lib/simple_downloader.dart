@@ -2,7 +2,6 @@ export 'src/simple_downloader_task.dart';
 export 'src/simple_downloader_callback.dart' show DownloadStatus;
 
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'src/simple_downloader_callback.dart';
@@ -10,7 +9,8 @@ import 'src/simple_downloader_task.dart';
 import 'src/simple_downloader_method.dart';
 import 'src/simple_downloader_platform_interface.dart';
 
-/// this class using singleton pattern.
+/// Use instances of [SimpleDownloaded] to start this plugin
+///
 class SimpleDownloader {
   static SimpleDownloader? _instance;
   static StreamSubscription? _subscription;
@@ -27,7 +27,8 @@ class SimpleDownloader {
         DownloaderMethod(client: _client, task: _task, callback: _callback);
   }
 
-  /// static method to initialize a this class.
+  /// create new instance of Simple downloader.
+  ///
   static SimpleDownloader init({required DownloaderTask task}) {
     if (_instance == null) {
       final Client client = Client();
@@ -47,39 +48,36 @@ class SimpleDownloader {
   }
 
   /// start download file.
-  Future<void> download() async {
+  void download() async {
     _subscription = await _method.start();
   }
 
   /// pause downloading file.
-  Future<void> pause() async {
+  void pause() async {
     _callback.status = DownloadStatus.paused;
     _subscription?.pause();
   }
 
   /// resume downloading file.
-  Future<void> resume() async {
+  void resume() async {
     _callback.status = DownloadStatus.resume;
     _subscription?.resume();
   }
 
   /// cancel downloading file.
-  Future<void> cancel() async {
+  void cancel() async {
     _callback.status = DownloadStatus.canceled;
     _subscription?.cancel();
   }
 
   /// retry downloading file.
-  Future<void> retry() async {
+  void retry() async {
     download();
   }
 
   /// try to open downloaded file.
   Future<bool?> open() async {
-    final result = await SimpleDownloaderPlatform.instance.openFile(_task);
-    debugPrint("$result");
-
-    return result;
+    return await SimpleDownloaderPlatform.instance.openFile(_task);
   }
 
   /// delete downloaded file.
