@@ -8,7 +8,7 @@ In your flutter project add the dependency in your pubspec.yaml:
 ```yml
 dependencies:
 ...
-simple_downloader: ^0.0.1
+simple_downloader: ^0.0.2
 ```
 
 ## Usage
@@ -27,9 +27,10 @@ int _total = 0;
 
 DownloadStatus _status = DownloadStatus.undefined;
 DownloaderTask _task = const DownloaderTask(
-url:
-    "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
-fileName: "file_example.jpg",
+    url:
+        "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
+    fileName: "file_example.jpg",
+    bufferSize: 64,
 );
 
 @override
