@@ -2,6 +2,7 @@ export 'src/simple_downloader_task.dart';
 export 'src/simple_downloader_callback.dart' show DownloadStatus;
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'src/simple_downloader_callback.dart';
@@ -80,12 +81,18 @@ class SimpleDownloader {
     try {
       return await SimpleDownloaderPlatform.instance.openFile(_task);
     } catch (e) {
-      rethrow;
+      debugPrint("$e");
+      return Future.value(false);
     }
   }
 
   /// delete downloaded file.
   Future<bool?> delete() async {
-    return await _method.deleteFiles();
+    try {
+      return await _method.deleteFiles();
+    } catch (e) {
+      debugPrint("$e");
+      return Future.value(false);
+    }
   }
 }
