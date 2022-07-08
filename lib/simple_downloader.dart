@@ -77,7 +77,11 @@ class SimpleDownloader {
 
   /// try to open downloaded file.
   Future<bool?> open() async {
-    return await SimpleDownloaderPlatform.instance.openFile(_task);
+    try {
+      return await SimpleDownloaderPlatform.instance.openFile(_task);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// delete downloaded file.
