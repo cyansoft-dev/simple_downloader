@@ -32,7 +32,7 @@ object IntentUtils {
     @kotlin.jvm.Synchronized
     fun validatedFileIntent(context: Context, path: String?, contentType: String?): Intent? {
         val file = File(path!!)
-        var intent: Intent = buildIntent(context, file, contentType!!)
+        var intent = buildIntent(context, file, contentType!!)
         if (validateIntent(context, intent)) {
             return intent
         }
