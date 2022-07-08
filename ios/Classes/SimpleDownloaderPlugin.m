@@ -1,4 +1,4 @@
-#import "FlDownloaderPlugin.h"
+#import "SimpleDownloaderPlugin.h"
 #if __has_include(<simple_downloader/simple_downloader-Swift.h>)
 #import <simple_downloader/simple_downloader-Swift.h>
 #else
@@ -8,8 +8,8 @@
 #import "simple_downloader-Swift.h"
 #endif
 
-@implementation FlDownloaderPlugin
+@implementation SimpleDownloaderPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftFlDownloaderPlugin registerWithRegistrar:registrar];
+  [SwiftSimpleDownloaderPlugin registerWithRegistrar:registrar];
 }
 @end
