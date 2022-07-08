@@ -47,7 +47,7 @@ class SimpleDownloaderPlugin: FlutterPlugin, MethodCallHandler {
     val mimeType:String? = call.argument<String>("mimeType")
 
     val saveFilePath:String = savedDir + File.separator.toString() + fileName
-    val intent = validatedFileIntent(context, saveFilePath, mimeType)
+    val intent = validatedFileIntent(context, saveFilePath, mimeType!!)
     if (intent == null) {
       result.success(false)
     }else{
