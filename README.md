@@ -2,13 +2,14 @@
 
 A flutter package for handle downloading file using http in more simple & easy.
 
+
 ## Getting Started
 
 In your flutter project add the dependency in your pubspec.yaml:
 ```yml
 dependencies:
 ...
-simple_downloader: ^0.0.2
+simple_downloader: ^0.0.3
 ```
 
 ## Usage
@@ -24,14 +25,13 @@ late SimpleDownloader _downloader;
 double _progress = 0.0;
 int _offset = 0;
 int _total = 0;
-
 DownloadStatus _status = DownloadStatus.undefined;
 DownloaderTask _task = const DownloaderTask(
-    url:
-        "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
-    fileName: "file_example.jpg",
-    bufferSize: 64,
-);
+    url:"https://images.unsplash.com/photo-1615220368123-9bb8faf4221b?ixlib=rb-1.2.1&dl=vadim-kaipov-f6jkAE1ZWuY-unsplash.jpg&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    fileName: "images_downloaded.jpg",
+    bufferSize:
+        1024, // if bufferSize value not set, default value is 64 ( 64 Kb )
+    );
 
 @override
 void initState() {
@@ -58,6 +58,7 @@ Future<void> init() async {
         });
     });
 }
+
 ```
 
 ### Dispose
@@ -67,6 +68,7 @@ void dispose() {
     _downloader.dispose();
     super.dispose();
 }
+
 ```
 
 ### To start downloader
@@ -94,13 +96,20 @@ _downloader.cancel();
 _downloader.retry();
 ```
 
+### To restart downloader
+```
+_downloader.restart();
+```
+
 ### To open downloaded file if complete ( Support android only )
 ```
-final isSuccess = (await _downloader.open())!;
-
-if(!isSuccess){
-    debugPrint("Failed to open downloaded file.");
-}
+_downloader.open().then(
+    (isSuccess) {
+        if (!isSuccess!) {
+        print(context, "Failed to open downloaded file.");
+        }
+    },
+);
 ```
 
 ## Android Integration
@@ -130,3 +139,5 @@ Add the following to AndroidManifest.xml:
 <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />     
 ```
 
+## Note
+This plugin is not support for downloading file from google drive.

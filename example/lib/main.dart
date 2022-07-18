@@ -20,12 +20,13 @@ class _MyAppState extends State<MyApp> {
   double _progress = 0.0;
   int _offset = 0;
   int _total = 0;
-
   DownloadStatus _status = DownloadStatus.undefined;
   DownloaderTask _task = const DownloaderTask(
     url:
-        "https://file-examples.com/storage/fe2de9ae4662c61a094f3db/2017/10/file_example_JPG_2500kB.jpg",
-    fileName: "file_example.jpg",
+        "https://images.unsplash.com/photo-1615220368123-9bb8faf4221b?ixlib=rb-1.2.1&dl=vadim-kaipov-f6jkAE1ZWuY-unsplash.jpg&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    fileName: "images_downloaded.jpg",
+    bufferSize:
+        1024, // if bufferSize value not set, default value is 64 ( 64 Kb )
   );
 
   @override
@@ -126,8 +127,8 @@ class _MyAppState extends State<MyApp> {
 
   Widget get labelStatus {
     switch (_status) {
-      case DownloadStatus.running:
-        return const Text("Downloading");
+      case DownloadStatus.undefined:
+        return const Text("Waiting..");
       case DownloadStatus.completed:
         return const Text("Download Completed");
       case DownloadStatus.failed:
@@ -139,7 +140,7 @@ class _MyAppState extends State<MyApp> {
       case DownloadStatus.canceled:
         return const Text("Download Canceled");
       default:
-        return const Text("Waiting..");
+        return const Text("Downloading");
     }
   }
 
@@ -155,7 +156,9 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
-    if (_status == DownloadStatus.running) {
+    if (_status == DownloadStatus.running ||
+        _status == DownloadStatus.resume ||
+        _status == DownloadStatus.retry) {
       return Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -247,15 +250,29 @@ class _MyAppState extends State<MyApp> {
 
     if (_status == DownloadStatus.failed ||
         _status == DownloadStatus.canceled) {
-      return IconButton(
-        splashRadius: 20,
-        onPressed: () => _downloader.retry(),
-        constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
-        icon: const Icon(
-          Icons.refresh,
-          color: Colors.green,
-        ),
-      );
+      return Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            IconButton(
+              splashRadius: 20,
+              onPressed: () => _downloader.retry(),
+              constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+              icon: const Icon(
+                Icons.refresh,
+                color: Colors.green,
+              ),
+            ),
+            IconButton(
+              splashRadius: 20,
+              onPressed: () => _downloader.restart(),
+              constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+              icon: const Icon(
+                Icons.restart_alt,
+                color: Colors.red,
+              ),
+            ),
+          ]);
     }
 
     return null;

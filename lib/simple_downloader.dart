@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'src/simple_downloader_callback.dart';
-import 'src/simple_downloader_task.dart';
 import 'src/simple_downloader_method.dart';
+import 'src/simple_downloader_task.dart';
 import 'src/simple_downloader_platform_interface.dart';
 
 /// Use instances of [SimpleDownloaded] to start this plugin
@@ -49,41 +49,63 @@ class SimpleDownloader {
   }
 
   /// start download file.
-  void download() async {
-    _subscription = await _method.start();
+  Future<void> download() async {
+    if (_callback.status != DownloadStatus.running) {
+      _subscription = await _method.start();
+    }
+    // _method.start();
   }
 
   /// pause downloading file.
-  void pause() async {
-    _callback.status = DownloadStatus.paused;
-    _subscription?.pause();
+  Future<void> pause() async {
+    if (_callback.status == DownloadStatus.running) {
+      _callback.status = DownloadStatus.paused;
+      _subscription?.pause();
+    }
   }
 
   /// resume downloading file.
-  void resume() async {
-    _callback.status = DownloadStatus.resume;
-    _subscription?.resume();
+  Future<void> resume() async {
+    if (_callback.status == DownloadStatus.paused) {
+      _callback.status = DownloadStatus.resume;
+      _subscription?.resume();
+    }
   }
 
   /// cancel downloading file.
-  void cancel() async {
+  Future<void> cancel() async {
     _callback.status = DownloadStatus.canceled;
     _subscription?.cancel();
   }
 
   /// retry downloading file.
-  void retry() async {
-    download();
+  /// this function can be run if status downloading file is failed or canceled.
+  Future<void> retry() async {
+    if (_callback.status == DownloadStatus.failed ||
+        _callback.status == DownloadStatus.canceled) {
+      _subscription = await _method.start(resume: true);
+    }
+  }
+
+  /// restart downloading file.
+  Future<void> restart() async {
+    if (_callback.status == DownloadStatus.failed ||
+        _callback.status == DownloadStatus.canceled) {
+      download();
+    }
   }
 
   /// try to open downloaded file.
   Future<bool?> open() async {
-    try {
-      return await SimpleDownloaderPlatform.instance.openFile(_task);
-    } catch (e) {
-      debugPrint("$e");
-      return Future.value(false);
+    if (_callback.status == DownloadStatus.completed) {
+      try {
+        return await SimpleDownloaderPlatform.instance.openFile(_task);
+      } catch (e) {
+        debugPrint("$e");
+        return Future.value(false);
+      }
     }
+    return null;
   }
 
   /// delete downloaded file.

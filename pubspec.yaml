@@ -1,6 +1,6 @@
 name: simple_downloader
-description: flutter plugin for handling download file using http with pause, resume & cancel.
-version: 0.0.2
+description: flutter plugin for handling download file using http with pause, resume, cancel, retry, restart & open file downloader features.
+version: 0.0.3
 homepage: https://github.com/cyansoft-dev/simple_downloader.git
 
 environment:

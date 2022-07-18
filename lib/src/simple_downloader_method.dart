@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:async/async.dart';
 import 'package:http/http.dart';
+import 'package:path/path.dart' as p;
 
 import 'simple_downloader_callback.dart';
 import 'simple_downloader_task.dart';
@@ -14,22 +15,43 @@ class DownloaderMethod {
   final DownloaderTask task;
   final DownloaderCallback callback;
 
-  DownloaderMethod(
-      {required this.client, required this.task, required this.callback});
+  DownloaderMethod({
+    required this.client,
+    required this.task,
+    required this.callback,
+  });
 
-  Future<StreamSubscription> start() async {
+  Future<StreamSubscription> start({bool resume = false}) async {
     late StreamSubscription subscription;
     int total = 0;
     int offset = 0;
 
     try {
+      callback.status = DownloadStatus.running;
       Client httpClient = client;
       Request request = Request('GET', Uri.parse(task.url!));
-      StreamedResponse response = await httpClient.send(request);
-      total = response.contentLength!;
+      File file;
 
-      // Open file
-      File file = await _createFile();
+      /// if params resume value is true
+      /// offset value takes from length of temp files
+      /// and try downloading files using range content header
+      if (resume) {
+        final path = p.join(task.downloadPath!, task.fileName!);
+        file = File('$path.tmp');
+        offset = await file.length();
+        request.headers.addAll({'range': 'bytes=$offset-'});
+      } else {
+        // Open file
+        file = await _createFile();
+      }
+
+      StreamedResponse response = await httpClient.send(request);
+      if (resume) {
+        total = int.parse(
+            response.headers[HttpHeaders.contentRangeHeader]!.split("/").last);
+      } else {
+        total = response.contentLength!;
+      }
 
       final reader = ChunkedStreamReader(response.stream);
 
@@ -44,16 +66,16 @@ class DownloaderMethod {
         callback
           ..offset = offset
           ..total = total
-          ..progress = (offset / total) * 100
-          ..status = DownloadStatus.running;
+          ..progress = (offset / total) * 100;
       }, onDone: () async {
         // rename file
-        await file.rename('${task.downloadPath!}/${task.fileName!}');
+        final path = p.join(task.downloadPath!, task.fileName!);
+        await file.rename(path);
 
         // callback download progress
         callback.status = DownloadStatus.completed;
       }, onError: (error) {
-        subscription.pause();
+        subscription.cancel();
 
         // callback download progress
         callback.status = DownloadStatus.failed;
@@ -67,7 +89,7 @@ class DownloaderMethod {
 
   Stream<Uint8List> _streamData(ChunkedStreamReader<int> reader) async* {
     // set the chunk size
-    int chunkSize = task.bufferSize;
+    int chunkSize = (task.bufferSize * 1024);
     Uint8List buffer;
     do {
       buffer = await reader.readBytes(chunkSize);
@@ -77,7 +99,8 @@ class DownloaderMethod {
 
   Future<bool> deleteFiles() async {
     try {
-      final file = File('${task.downloadPath!}/${task.fileName!}');
+      final path = p.join(task.downloadPath!, task.fileName!);
+      final file = File(path);
 
       if (await file.exists()) {
         await file.delete();
@@ -98,12 +121,13 @@ class DownloaderMethod {
     try {
       // checking file .tmp or download file is exists or not
       // if file exists, file delete first before create.
-      final tempFile = File('${task.downloadPath!}/${task.fileName!}.tmp');
+      final path = p.join(task.downloadPath!, task.fileName!);
+      final tempFile = File('$path.tmp');
       if (await tempFile.exists()) {
         await tempFile.delete();
       }
 
-      final file = File('${task.downloadPath!}/${task.fileName!}');
+      final file = File(path);
       if (await file.exists()) {
         await file.delete();
       }
