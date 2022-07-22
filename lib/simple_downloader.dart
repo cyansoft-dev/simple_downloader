@@ -1,5 +1,5 @@
 export 'src/simple_downloader_task.dart';
-export 'src/simple_downloader_callback.dart' show DownloadStatus;
+export 'src/simple_downloader_callback.dart';
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -33,7 +33,7 @@ class SimpleDownloader {
   static SimpleDownloader init({required DownloaderTask task}) {
     if (_instance == null) {
       final Client client = Client();
-      final DownloaderCallback callback = DownloaderCallback();
+      final callback = DownloaderCallback();
       return SimpleDownloader._internal(client, task, callback);
     }
 
