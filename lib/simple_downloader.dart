@@ -58,7 +58,8 @@ class SimpleDownloader {
 
   /// pause downloading file.
   Future<void> pause() async {
-    if (_callback.status == DownloadStatus.running) {
+    if (_callback.status == DownloadStatus.running ||
+        _callback.status == DownloadStatus.resume)) {
       _callback.status = DownloadStatus.paused;
       _subscription?.pause();
     }
